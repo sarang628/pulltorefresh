@@ -6,18 +6,27 @@ import com.sryang.library.pullrefresh.PullToRefreshLayout
 import com.sryang.library.pullrefresh.PullToRefreshLayoutState
 import com.sryang.library.pullrefresh.RefreshIndicatorState
 
-fun providePullToRefresh(state: PullToRefreshLayoutState): @Composable ((modifier : Modifier, isRefreshing: Boolean, onRefresh: (() -> Unit), contents: @Composable (() -> Unit)) -> Unit) =
-    { modifier, isRefreshing, onRefresh, contents ->
 
-        if (isRefreshing) {
-            state.updateState(RefreshIndicatorState.Refreshing)
-        } else {
-            state.updateState(RefreshIndicatorState.Default)
-        }
+data class PullToRefreshData(
+    val modifier : Modifier = Modifier,
+    val state : com.sarang.torang.compose.feed.state.RefreshIndicatorState = com.sarang.torang.compose.feed.state.RefreshIndicatorState.Default,
+    val onRefresh: (() -> Unit) = {},
+    val contents: @Composable () -> Unit = {}
+)
+
+fun providePullToRefresh(state: PullToRefreshLayoutState): @Composable (PullToRefreshData) -> Unit =
+    { data ->
+        state.updateState(
+            when(data.state){
+                com.sarang.torang.compose.feed.state.RefreshIndicatorState.Default -> RefreshIndicatorState.Default
+                com.sarang.torang.compose.feed.state.RefreshIndicatorState.PullingDown -> RefreshIndicatorState.PullingDown
+                com.sarang.torang.compose.feed.state.RefreshIndicatorState.ReachedThreshold -> RefreshIndicatorState.ReachedThreshold
+                com.sarang.torang.compose.feed.state.RefreshIndicatorState.Refreshing -> RefreshIndicatorState.Refreshing
+            })
 
         PullToRefreshLayout(
-            modifier = modifier, pullRefreshLayoutState = state, refreshThreshold = 80, onRefresh = onRefresh
+            modifier = data.modifier, pullRefreshLayoutState = state, refreshThreshold = 80, onRefresh = data.onRefresh
         ) {
-            contents.invoke()
+            data.contents.invoke()
         }
     }
