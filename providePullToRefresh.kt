@@ -24,9 +24,10 @@ fun providePullToRefresh(state: PullToRefreshLayoutState): @Composable (PullToRe
                 com.sarang.torang.compose.feed.state.RefreshIndicatorState.Refreshing -> RefreshIndicatorState.Refreshing
             })
 
-        PullToRefreshLayout(
-            modifier = data.modifier, pullRefreshLayoutState = state, refreshThreshold = 80, onRefresh = data.onRefresh
-        ) {
+        PullToRefreshLayout(modifier                = data.modifier,
+                            pullRefreshLayoutState  = state,
+                            refreshThreshold        = 80,
+                            onRefresh               = data.onRefresh) {
             data.contents.invoke()
         }
     }
